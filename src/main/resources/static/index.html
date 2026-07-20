@@ -12,7 +12,7 @@
     <nav class="menu">
       <a href="/" class="active">Welcome</a>
       <a href="/currencies.html">Currencies</a>
-      <a href="#" class="todo">Rates</a>
+      <a href="#latest-rates">Rates</a>
       <a href="#" class="todo">Convert</a>
       <a href="#" class="todo">History</a>
     </nav>
@@ -35,7 +35,7 @@
       </div>
       <div class="card">
         <h3>🧭 Your backlog</h3>
-        <p>The greyed-out menu items — Rates, Convert, History — are features you build.
+        <p>The greyed-out menu items — Convert and History — are features you build.
           See <span class="mono">requirements.md</span>.</p>
       </div>
       <div class="card">
@@ -43,6 +43,19 @@
         <p>Use AI to go fast; a feature is <em>done</em> only when it <em>works</em> and is
           <strong>merged to main</strong>.</p>
       </div>
+    </div>
+
+    <div class="panel">
+      <h2 id="latest-rates">Latest FX rates</h2>
+      <table>
+        <thead>
+          <tr><th>Base</th><th>Quote</th><th>Rate</th><th>Rate date</th></tr>
+        </thead>
+        <tbody id="rate-rows">
+          <tr><td colspan="4" class="status">Loading…</td></tr>
+        </tbody>
+      </table>
+      <p id="rates-status" class="status"></p>
     </div>
 
     <div class="panel">
@@ -63,5 +76,7 @@
       real feature. Full guidance: <span class="mono">README.md</span>.
     </p>
   </main>
+
+  <script src="/js/index.js"></script>
 </body>
 </html>
