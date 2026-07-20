@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX Capstone · W2D1 morning — recap, then JUnit/Mockito/TDD</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#243449; --ink:#e2e8f0; --muted:#94a3b8;
+    --accent:#22d3ee; --accent2:#818cf8; --good:#4ade80; --warn:#fbbf24; --code:#0b1120;
+    --border:#334155;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.55}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px 80px}
+  header.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 60%,#164e63 100%);
+       border-bottom:1px solid var(--border);padding:48px 0 36px;margin-bottom:32px}
+  .hero .wrap{padding-bottom:0}
+  .crumb{color:var(--accent);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
+  h1{font-size:2rem;margin:.35em 0 .2em}
+  .goal{color:var(--muted);max-width:46em;font-size:1.05rem}
+  .daynav{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}
+  .daynav span{font-size:.72rem;padding:3px 9px;border-radius:99px;border:1px solid var(--border);color:var(--muted)}
+  .daynav span.here{background:var(--accent);color:#062a33;border-color:var(--accent);font-weight:700}
+  h2{font-size:1.35rem;border-bottom:2px solid var(--accent);display:inline-block;padding-bottom:4px;margin-top:2.2em}
+  h3{color:var(--accent);font-size:1.02rem;margin-bottom:.35em}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;padding:0;list-style:none}
+  .badges li{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--good);
+       border-radius:8px;padding:10px 14px;font-size:.9rem}
+  .task{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:16px 0}
+  .task .thead{display:flex;align-items:baseline;gap:12px}
+  .task input[type=checkbox]{transform:scale(1.4);accent-color:var(--accent);margin-right:2px}
+  .task .tt{font-weight:700;font-size:1.05rem}
+  .task .meta{color:var(--muted);font-size:.8rem;margin-left:auto;white-space:nowrap}
+  .task p, .task ol{margin:.6em 0}
+  .task ol{padding-left:1.3em}
+  .task li{margin:.3em 0}
+  .checkpoint{background:#052e16;border:1px solid #166534;border-radius:8px;padding:8px 12px;
+       font-size:.88rem;margin-top:10px}
+  .checkpoint::before{content:"✔ CHECKPOINT  ";color:var(--good);font-weight:700;font-size:.75rem;letter-spacing:.08em}
+  details.hint{margin-top:10px;border:1px dashed var(--border);border-radius:8px;padding:8px 12px;font-size:.88rem}
+  details.hint summary{cursor:pointer;color:var(--warn);font-weight:600}
+  code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em}
+  code{background:var(--code);padding:2px 6px;border-radius:5px;border:1px solid var(--border)}
+  pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto}
+  pre code{background:none;border:none;padding:0}
+  table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.88rem}
+  th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--accent)}
+  td code{white-space:nowrap}
+  .theory{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:4px 20px 14px;margin:14px 0}
+  .deck{color:var(--muted);font-size:.75rem;font-style:italic}
+  .xtra{border-left:4px solid var(--accent2)}
+  .recap{border-left:4px solid var(--warn)}
+  .genai{background:#1e1b4b;border:1px solid #4338ca;border-radius:12px;padding:14px 20px;margin:18px 0}
+  .genai h3{color:var(--accent2)}
+  footer{margin-top:48px;border-top:1px solid var(--border);padding-top:16px;color:var(--muted);font-size:.85rem}
+  a{color:var(--accent)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:800px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <div class="crumb">FX Capstone · Week 2 · Day 1 · Morning</div>
+  <h1>Finish Friday, then test everything</h1>
+  <p class="goal"><strong>Goal of the morning:</strong> first close the two Week-1 threads that ran out of
+  clock — the exception family (<code>withdraw</code> that <em>throws</em>) and collections (a <code>Set</code>
+  that spots a duplicate). Then the week's real theme begins: machines prove everything. Real JUnit on the
+  code you just fixed, Mockito to fake the <code>RateFeed</code> nobody has built, a test-first
+  <code>FeeCalculator</code>, and a hard look at tests an AI writes for you. <em>Done looks like:</em> one green
+  <code>./mvnw test</code> — Friday finished, and four kinds of test written by lunch.</p>
+  <div class="daynav"><span>W1D1 Linux</span><span>W1D2 Git</span><span>W1D3 SQL</span><span>W1D4 Java I</span><span>W1D5 Java II</span><span class="here">W2D1·AM Testing</span><span>W2D1·PM</span><span>W2D2 Spring</span><span>W2D3 CI</span><span>W2D4 Docker</span><span>W2D5 Web</span></div>
+</div></header>
+<div class="wrap">
+
+<h2>Achievements — by end of the morning you can…</h2>
+<ul class="badges">
+  <li>🧯 Throw a checked exception where you used to warn, and guard a bug with an unchecked one</li>
+  <li>🧮 Make a <code>HashSet</code> spot a duplicate with a proper <code>equals</code>/<code>hashCode</code></li>
+  <li>🧪 Write JUnit 5 tests that state behaviour, including parameterized sets</li>
+  <li>🎭 Mock a dependency: stub returns, verify interactions, test the guard order</li>
+  <li>🔴🟢 Drive code into existence with red → green → refactor</li>
+  <li>⚖️ Judge AI-generated tests: code-derived vs rule-derived</li>
+</ul>
+
+<h2>Before you start</h2>
+<pre><code>./mvnw test -Dtest=RecapCheck   # RED on purpose — 8 tests, 5 failing. That's Exercise 1.
+git log --oneline -3            # you are where you left off</code></pre>
+<p>This run starts <strong>red</strong>: three Friday methods are gutted out of the baseline (each marked
+<code>// TODO Task 1</code>), and <code>RecapCheck</code> — a <em>given</em> grader — proves it. Read that grader
+first (<code>src/test/java/com/fx/recap/RecapCheck.java</code>): it's your Task 1 target <strong>and</strong> your
+first worked example of a JUnit test, before you write your own. New in <code>com.fx.core</code> (given):
+<code>RateFeed</code> — an interface with no implementation, <em>by design</em> — and <code>ConversionService</code>.
+JUnit 5 + Mockito ship via <code>spring-boot-starter-test</code>. Full walkthrough: <a href="TODO.md">TODO.md</a> ·
+per-task sheets in <a href="exercises/">exercises/</a>. Worked solutions are held by your instructor —
+after you've bled a little.</p>
+<p style="color:var(--muted);font-size:.9rem"><strong>How to use this page.</strong> The cards below are a
+scannable overview — click through, check off as you go. For the <em>why</em> behind each task and the
+finer-grained step breakdown, open <a href="TODO.md">TODO.md</a> alongside.</p>
+
+<h2>This morning's tasks <span class="deck">(~3.5h · progress saved in this browser)</span></h2>
+
+<div class="task recap"><div class="thead"><input type="checkbox" data-k="w2d1mt1"><span class="tt">1 · Recap: exceptions &amp; collections (the Friday catch-up)</span><span class="meta">~45 min · decks 15 &amp; 13</span></div>
+  <p><em>Why:</em> two Friday behaviours are stubbed out and must go back — a money system that can't refuse a
+  withdrawal, or that silently double-counts a re-sent payment, isn't one. Not a rebuild: the classes and
+  fields exist, only the marked methods are hollow. And it hands you the exact code Task 2 will test.</p>
+  <p><strong>Exceptions:</strong> make <code>Account.withdraw</code> <em>throw</em>
+  <code>InsufficientFundsException(amount, balance)</code> (the message is frozen — just throw it); guard a
+  non-positive rate in <code>CurrencyConverter</code> with the unchecked <code>InvalidRateException</code>.
+  <strong>Collections:</strong> give <code>Transfer</code> an <code>equals</code>/<code>hashCode</code> over
+  every field <em>except id</em>, then dedupe <code>1005 → 1000</code> with a <code>LinkedHashSet</code> and
+  group by currency to name the busiest lane.</p>
+  <details class="hint"><summary>Stuck?</summary><code>equals</code> and <code>hashCode</code> must list the
+  <em>same</em> fields: <code>Objects.hash(fromAccount, toAccount, amount, currency, executedAt, status)</code>.
+  Include <code>id</code> by mistake and 1005 survives.</details>
+  <div class="checkpoint"><code>./mvnw test -Dtest=RecapCheck</code> — <strong>all 8 green</strong>: dedupe 1005→1000, busiest <strong>SGD (154)</strong>, withdraw throws, rate guarded.</div>
+</div>
+
+<div class="task"><div class="thead"><input type="checkbox" data-k="w2d1mt2"><span class="tt">2 · JUnit, test-first: FxRate, then the converter &amp; the exception you just wrote</span><span class="meta">~50 min · JUnit 5 deck</span></div>
+  <p><em>Why:</em> your first real contact with testing — done the professional way, test-first. Build
+  <code>FxRate</code> (the last Day-3 table without a Java twin, the row your API serves tomorrow) by writing
+  the test <em>before</em> the class: red → green → refactor. Then turn the same discipline on the converter and
+  on Task 1's <code>withdraw</code> — deltas, <code>assertThrows</code>, parameterization are the three patterns
+  you'll reach for every day.</p>
+  <p><strong>Red → green → refactor</strong> on <code>FxRate</code> (fixture, <code>convert</code> delta,
+  <code>inverted()</code>, <code>assertThrows(InvalidRateException…)</code>, <code>toString</code>). Then a
+  <code>CurrencyConverterTest</code> + Account suite: known conversions (delta!), zero amounts, and the important
+  one — <code>withdraw_moreThanBalance_throws</code> asserting both amounts on the caught exception — plus one
+  <code>@ParameterizedTest</code> + <code>@CsvSource</code>.</p>
+  <details class="hint"><summary>Stuck?</summary>Parameterized shape: <code>@CsvSource({"100,1.10,110.0", …})</code>
+  with matching method parameters. Assert the exception message via the returned exception object.</details>
+  <div class="checkpoint"><code>FxRate</code> built test-first, plus <strong>≥7 green</strong> converter/account tests including one parameterized set.</div>
+</div>
+
+<div class="task"><div class="thead"><input type="checkbox" data-k="w2d1mt3"><span class="tt">3 · Mockito: fake the missing feed</span><span class="meta">~45 min · Mockito deck</span></div>
+  <p><em>Why:</em> in real projects your class always depends on something slow, flaky, or not built yet —
+  waiting is the amateur move, mocking is the pro one. State tests and interaction tests are two distinct
+  tools; the guard-order test at the end is pure interaction and the heart of the morning.</p>
+  <p><code>mock(RateFeed.class)</code>, teach it with <code>when(feed.rateFor("EUR/USD")).thenReturn(1.0818)</code>,
+  assert the service converts through it. <code>verify</code> exactly one feed call. Stub the unknown-pair failure.
+  Then the crown jewel: verify the feed is <strong>never called</strong> when validation fails — the guard
+  must come first.</p>
+  <details class="hint"><summary>Stuck?</summary><code>verify(feed, never()).rateFor(anyString())</code> after a
+  call that fails validation. A stub answers questions; a verify asks "did the conversation happen as designed?"</details>
+  <div class="checkpoint"><strong>4+ green tests</strong>; the guard-order test fails if you reorder <code>convert</code> — try it, restore it.</div>
+</div>
+
+<div class="task"><div class="thead"><input type="checkbox" data-k="w2d1mt4"><span class="tt">4 · TDD kata: the FeeCalculator</span><span class="meta">~50 min · TDD deck</span></div>
+  <p><em>Why:</em> TDD is a <em>design</em> technique that happens to leave tests behind — every line of
+  production code will have had a red demanding it. The <code>git log</code> shape at the end is the audit
+  trail of the design emerging, one rule at a time; it matters more than the final code.</p>
+  <p>Rules arrive one at a time — no reading ahead, no production code without a failing test.
+  RED (fail for the right reason) → GREEN (dumbest passing code — hardcoding is legal early) →
+  REFACTOR (stay green) → <code>git commit -m "tdd: rule N green"</code>. Rules ①–④ (retail tiers
+  1.0% / 0.5% / 0.25%, min 1.00) are the required core; ⑤–⑦ (business flat, negatives throw,
+  boundary decision) continue the same rhythm as time allows.</p>
+  <details class="hint"><summary>Stuck?</summary>If rule 1 is "&lt;1,000 → 1.0%", then <code>return amount *
+  0.01;</code> is a <em>correct</em> green. Resist generality until a test demands it — that's the discipline,
+  not a shortcut.</details>
+  <div class="checkpoint">Git log: <strong>≥4 <code>tdd:</code> commits</strong> (≥6 if you reach rule ⑦); suite green; boundary decision in a test name.</div>
+</div>
+
+<div class="genai"><h3>🤖 Closer · AI-driven testing: the machine writes tests, you write judgement (~30 min)</h3>
+  <p>Generate <code>FeeCalculator</code> tests <em>from the code</em>, then <em>from the rules</em>, and diff the
+  two — code-derived tests bless existing bugs, rule-derived tests find them. Write the 5-line comparison in
+  <code>docs/genai-tests-note.md</code>. Then the senior-teammate question, verbatim: <em>"Here is my
+  FeeCalculatorTest suite: &lt;paste&gt;. What behaviour is still untested?"</em> — implement the one suggestion
+  that survives your scepticism (red first!), reject the rest with one line each. The suite is yours, not the
+  model's. <strong>Trust, but verify.</strong></p>
+  <div class="checkpoint">Note names ≥1 wrong/missing assertion from the code-only run, and which suite caught the minimum-fee edge (rule 4).</div>
+</div>
+
+<h2>Theory background</h2>
+
+<div class="theory recap"><h3>Friday, quickly: exceptions &amp; collections <span class="deck">decks 15 &amp; 13</span></h3>
+<p><strong>The exception family.</strong> A <em>checked</em> exception (extends <code>Exception</code>) is a
+business condition callers must face — <code>InsufficientFundsException</code>: the method signature carries
+<code>throws</code>, and its message names both the requested and the available amount. An <em>unchecked</em>
+exception (extends <code>RuntimeException</code>) is a bug, not an everyday event —
+<code>InvalidRateException</code> for a negative rate. Throwing beats warning: a warning scrolls off the screen;
+a thrown exception stops the wrong thing from happening.</p>
+<p><strong>equals / hashCode.</strong> A <code>HashSet</code> spots a duplicate in two steps — it asks
+<code>hashCode()</code> (which bucket?) then <code>equals()</code> (really the same?). Define both from the
+<em>same</em> fields (here: everything except the re-issued <code>id</code>) and the Set drops re-sends
+(1005 → 1000). Get them out of sync and the dedupe fails <em>silently</em> — the worst kind of bug.
+<code>computeIfAbsent</code> builds a grouping <code>Map&lt;Currency, List&lt;Transfer&gt;&gt;</code> in one line.</p></div>
+
+<div class="theory"><h3>Unit tests that earn their keep <span class="deck">JUnit 5 deck</span></h3>
+<p>A unit test isolates one behaviour: arrange, act, assert — one reason to fail. Test names are
+documentation (<code>method_condition_outcome</code>). Doubles need deltas. <code>assertThrows</code> makes
+the failure path a first-class citizen: the unhappy path is where money systems earn trust.
+<code>@BeforeEach</code> rebuilds the fixture so tests stay independent; a test that depends on another
+test's leftovers will betray you on a Friday. <code>@ParameterizedTest</code> multiplies one behaviour
+across many inputs without copy-paste.</p></div>
+
+<div class="theory"><h3>Mocks: testing conversations <span class="deck">Mockito deck</span></h3>
+<p>Real dependencies are slow, flaky, or — like <code>RateFeed</code> — don't exist. A <strong>mock</strong>
+stands in: <code>when(…).thenReturn(…)</code> scripts its answers (a <em>stub</em>);
+<code>verify(…)</code> interrogates the conversation (an <em>interaction test</em>): was it called, how often,
+with what, or <code>never()</code>? State tests ask "what came back?"; interaction tests ask "did we talk to
+the collaborator correctly?" — the guard-order test is pure interaction: validation must fail
+<em>before</em> the feed is consulted. Mock what you own the boundary to; don't mock value objects.</p></div>
+
+<div class="theory"><h3>TDD: the discipline <span class="deck">TDD deck v2</span></h3>
+<p>Test-Driven Development inverts the order: the test defines "done" before the code exists.
+<strong>Red</strong> — watch the failure, and check it fails for the right reason (a compile error is not a
+red). <strong>Green</strong> — the least code that passes; hardcoding early is orthodox, generality is debt
+until a test demands it. <strong>Refactor</strong> — with green as your license. The commit log
+(<code>tdd: rule N green</code>) becomes the audit trail of the design emerging. TDD's real product isn't
+tests — it's code whose every behaviour was once a requirement someone stated.</p></div>
+
+<div class="theory"><h3>AI-generated tests <span class="deck">GenAI deck</span></h3>
+<p>Given code, a model writes tests that <em>mirror the code</em> — including its bugs; the suite goes green
+and proves nothing. Given <em>rules</em>, it writes tests that check intent — and can catch the
+implementation lying. So: generate from specifications, review every assertion, and treat generated tests
+like a junior's PR — useful, fast, and unsigned until you've read them. Trust, but verify is the whole
+game.</p></div>
+
+<h2>Cheatsheet</h2>
+<div class="cols">
+<div>
+<table><tr><th colspan="2">Java recap (Task 1)</th></tr>
+<tr><td><code>class E extends Exception</code></td><td>checked — callers must handle/declare</td></tr>
+<tr><td><code>class E extends RuntimeException</code></td><td>unchecked — a bug, not a path</td></tr>
+<tr><td><code>throw new InsufficientFundsException(a, b)</code></td><td>throw, don't warn</td></tr>
+<tr><td><code>@Override equals / hashCode</code></td><td>same fields, <code>id</code> excluded</td></tr>
+<tr><td><code>new LinkedHashSet&lt;&gt;(list)</code></td><td>dedupe, order kept</td></tr>
+<tr><td><code>map.computeIfAbsent(k, x-&gt;new ArrayList&lt;&gt;()).add(v)</code></td><td>group by key</td></tr>
+</table>
+<table><tr><th colspan="2">JUnit 5</th></tr>
+<tr><td><code>@Test</code></td><td>a behaviour, provable</td></tr>
+<tr><td><code>assertEquals(exp, act, 1e-4)</code></td><td>delta for doubles</td></tr>
+<tr><td><code>assertThrows(E.class, () -&gt; …)</code></td><td>returns the exception — assert its message</td></tr>
+<tr><td><code>@BeforeEach</code></td><td>fresh fixture per test</td></tr>
+<tr><td><code>@ParameterizedTest @CsvSource({"a,b,1.0"})</code></td><td>one test, many rows</td></tr>
+<tr><td><code>./mvnw test</code> / <code>-Dtest=RecapCheck</code></td><td>all / one class</td></tr>
+</table>
+</div>
+<div>
+<table><tr><th colspan="2">Mockito</th></tr>
+<tr><td><code>RateFeed feed = mock(RateFeed.class)</code></td><td>the stand-in</td></tr>
+<tr><td><code>when(feed.rateFor("EUR/USD")).thenReturn(1.0818)</code></td><td>script an answer</td></tr>
+<tr><td><code>when(…).thenThrow(new X())</code></td><td>script a failure</td></tr>
+<tr><td><code>verify(feed).rateFor("EUR/USD")</code></td><td>the call happened (once)</td></tr>
+<tr><td><code>verify(feed, times(2)) / never()</code></td><td>how often / not at all</td></tr>
+<tr><td><code>any(), anyString(), eq("EUR")</code></td><td>argument matchers (all-or-none per call)</td></tr>
+</table>
+<table><tr><th colspan="2">TDD protocol</th></tr>
+<tr><td>RED</td><td>smallest failing test, right reason</td></tr>
+<tr><td>GREEN</td><td>dumbest passing code (hardcode!)</td></tr>
+<tr><td>REFACTOR</td><td>dedupe; tests stay green</td></tr>
+<tr><td><code>git commit -m "tdd: rule N green"</code></td><td>after every green</td></tr>
+</table>
+</div>
+</div>
+
+<h2>Extra challenges <span class="deck">(optional, after the checkpoints pass)</span></h2>
+<div class="task xtra"><p>⚡ <strong>Finish Friday's analyzer.</strong> Back in <code>Analyzer.main</code>, add the
+rest of the Week-1 chain on the deduped list: sort by amount descending and print the top 5 (<code>#115 /
+19991.47</code> on top); <code>removeIf(t -&gt; t.getAmount() &lt; 100)</code> → <strong>998</strong>; a
+<code>@FunctionalInterface TransferFilter</code> used with a lambda and a method reference
+(<code>Analyzer::isFailed</code>) → <strong>88</strong> FAILED; per-status totals via
+<code>Map.merge(status, amount, Double::sum)</code> into a <code>TreeMap</code>.</p></div>
+<div class="task xtra"><p>⚡ <strong>Mutation testing by hand.</strong> Make five tiny mutations to
+<code>FeeCalculator</code> (± a boundary, swap a rate…). How many does your suite kill? Any survivor = a
+missing test — write it.</p></div>
+<div class="task xtra"><p>⚡ <strong>ArgumentCaptor.</strong> Use <code>ArgumentCaptor</code> to assert the exact
+pair string <code>ConversionService</code> passes to the feed — no matchers, the real value.</p></div>
+<div class="task xtra"><p>⚡ <strong>Test the analyzer.</strong> Friday's <code>CsvLoader</code> still has no
+malformed-line tests of its own. Give it three, without touching the production code — can you?</p></div>
+
+<footer>
+  <p>Guided walkthrough (story, purpose, step-by-step): <a href="TODO.md">TODO.md</a> · per-task sheets:
+  <a href="exercises/">exercises/</a> · Your AI reads <code>AGENTS.md</code> (in this folder) automatically ·
+  worked solutions are held by your instructor.</p>
+  <p>This is the morning session; the afternoon is a separate subject. Tomorrow: the stub dies — Spring Boot
+  serves real rates from fxdb, and FeeCalculator starts charging.</p>
+</footer>
+</div>
+<script>
+document.querySelectorAll('input[data-k]').forEach(cb=>{
+  cb.checked = localStorage.getItem('fx-'+cb.dataset.k)==='1';
+  cb.addEventListener('change',()=>localStorage.setItem('fx-'+cb.dataset.k, cb.checked?'1':'0'));
+});
+</script>
+</body>
+</html>
