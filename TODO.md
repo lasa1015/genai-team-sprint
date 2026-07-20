@@ -86,3 +86,4 @@ You should be able to say yes to all of these:
 Tomorrow the stub dies: you build the real REST API on fxdb — and `FeeCalculator` starts
 charging. This suite is what will tell you tomorrow's Spring wiring is right the first time.
 **Do not delete or weaken any test you wrote today.**
+# 1-line change by yuki
