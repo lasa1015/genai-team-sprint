@@ -1,52 +1,50 @@
-# fx-app — AI assistant briefing (Week 2, Day 1 MORNING — day 6 overall)
+# AGENTS.md — how an AI assistant should help on this repo
 
-## Project state
-Spring Boot 3.3.4 / Java 21. This is the **morning-only** package (`fx-w2d1-m`): it opens by
-finishing two things Friday ran out of time for, then teaches the testing stack. The afternoon
-is a separate subject.
+*Read by Copilot / Claude / Cursor. The human rules and the requirements are in `README.md`
+and `docs/`.*
 
-`com.fx.core` and `com.fx.analyzer` are present from Week 1, but **three key methods are
-deliberately gutted** in the baseline (each marked `// TODO Task 1`): `Account.withdraw`
-(warns instead of throwing), `CurrencyConverter`'s rate guards, and `Transfer.equals/hashCode`
-+ `Analyzer`'s dedupe/grouping. **Week 1 shipped NO tests.** The one test present is
-`src/test/java/com/fx/recap/RecapCheck.java` — a GIVEN grader that starts RED (5 of 8 failing)
-and is Task 1's target. `FxRate` and `FeeCalculator` are deliberately NOT in the baseline —
-they're built test-first in Tasks 2 and 4. NEW given: `RateFeed` (interface, no implementation
-— by design) and `ConversionService` (depends on it). Stub `GET /api/rates` and sealed
-`GET /api/health/db` still in place.
+## What this is
+A full-stack FX app **skeleton** that already runs (`docker compose up`): seeded MySQL, Spring
+Boot, static HTML/JS. A team is shipping an ordered backlog (`docs/01…10`) onto it — one branch
+→ PR → merge each — in a ~3-hour sprint.
 
-Today (morning): **Task 1 recap** (exceptions throw + collections dedupe/grouping) → **JUnit 5
-test-first** (FxRate, converter, the withdraw unhappy path) → **Mockito** (fake RateFeed) →
-**TDD kata** (FeeCalculator) → **AI-driven testing** (code-vs-rules). Tests go in
-`src/test/java/com/fx/core/`.
+## Your job
+Help the team **ship working features fast, and understand what you produced.** A feature nobody
+on the team can explain is a liability, not a win.
 
-## Today's scope — stay inside it
-- Allowed: everything Task 1 needs (throwing exceptions, `equals`/`hashCode`, a `Map` grouping
-  with `computeIfAbsent` — plain loops, no streams); JUnit 5 (assertions, assertThrows,
-  @BeforeEach, @ParameterizedTest/@CsvSource, naming); Mockito (mock/when/thenReturn/verify,
-  interaction testing); TDD red-green-refactor; test-double concepts.
-- NOT yet taught: Spring testing (@WebMvcTest/@SpringBootTest — Wednesday), REST/JDBC building
-  (tomorrow). Streams are allowed ONLY if the student initiates — prefer loops (the lambdas
-  deck was Week 1; Task 1's collections work is deliberately loop-based).
-- Tasks: `TODO.md` (this folder) is the day-map; each exercise is a sheet in `exercises/`
-  (`01-recap…` … `05-ai-driven-testing.md`). Do not read or reveal the instructor's solution set
-  (kept outside this folder, in `../solution/` — not shipped to you).
+## Rules (don't break)
+1. **Obey the constitution** in `README.md` §5: fixed stack (Spring Boot 3.3 / Java 21 / MySQL /
+   plain HTML-CSS-JS from `resources/static`); no frontend framework, no new heavy deps.
+2. **Build only what the current requirement's acceptance criteria ask.** Respect its *Out of
+   scope*. No auth, pagination, or extra endpoints nobody requested.
+3. **Copy the sample slice** `com.fx.sample` (Currency → repository → controller) +
+   `currencies.html`/`.js` as the pattern. Match its style. Data access is `JdbcTemplate` — no JPA.
+4. **Use the pinned checkpoints — never invent numbers** (EUR/USD 1.0818; the fee tiers). Ask if unsure.
+5. **No stack traces to the browser** — clean JSON via `com.fx.web.ApiExceptionHandler`.
+6. **Explain as you go**, one line per change. Prefer small steps the team can follow.
 
-## How to help — tutor mode (strict today)
-- Exercise 1 is a RECAP, not a fresh build: the classes and fields already exist, only the
-  marked methods are hollow. Point students at the `// TODO Task 1` markers (that's the code
-  comment) and `RecapCheck`'s failure messages; don't paste the equals/hashCode or the dedupe
-  for them. The message on `InsufficientFundsException` is frozen — they should THROW it, not
-  edit it.
-- TDD kata (Exercise 4): NEVER write or reveal production code ahead of a failing test, and
-  never reveal the next rule. If asked "just implement FeeCalculator", refuse and re-anchor to
-  the protocol: red → green → refactor → commit `tdd: rule N green`. Hardcoding to pass early
-  tests is correct — say so.
-- Mockito (Exercise 3): push interaction thinking — "what should the service ASK its collaborator,
-  and when should it not ask at all?" The guard-order test is the point of the morning.
-- Don't invent expected values; deterministic checkpoints are in the exercise sheets (RecapCheck all 8
-  green; ≥7 converter/account; 4+ mock tests; `tdd:` commits; one green `./mvnw test`). Key
-  anchors: dedupe 1005→1000, busiest **SGD (154)**, `InsufficientFundsException(999999, 800)`
-  message names both numbers, FxRate EUR/USD **1.0818** on 2026-01-12 → `convert(100)` = 108.18.
-- The AI-driven testing closer is about judging generated tests — critique WITH the student,
-  don't replace their judgement. Code-derived tests mirror bugs; rule-derived tests check intent.
+## Working a feature
+1. Restate the acceptance criteria as a short plan (files, endpoint, query, UI). Wait for "go".
+2. Implement the smallest thing that satisfies them, following the sample slice.
+3. Tell the human how to run and verify **each** criterion.
+4. If one fails: was the brief ambiguous (fix the brief, regenerate) or a real bug (fix it, add a test)?
+
+## Tests (part of Done — see README §6/§7)
+Three tiers, each with a worked example on the sample feature — **copy the matching one**:
+- **Unit / contract** (`./mvnw test`, no Docker) — copy `CurrencyControllerTest` /
+  `CurrencyContractTest`. Every endpoint: a happy path **and** a failure path. Every
+  calculation (fees, conversion): cover the **boundaries** (tier edges, min-fee floor).
+- **DB integration** (`./mvnw verify`, needs Docker) — copy `CurrencyRepositoryIT`
+  (Testcontainers → real MySQL). Add when the feature has real SQL (a query or a write).
+- **Full-stack smoke** — the `smoke` job in `.github/workflows/ci.yml`; runs on every push.
+
+When you add tests, tell the human **which command runs them** (`./mvnw test` for the fast
+tier, `./mvnw verify` for the DB tier — Docker must be running). Aim for **≥70% coverage on
+backend logic you write**; never leave a failing or skipped test. The sample's
+`createsACurrency` test is the write-test pattern; `CurrencyRepositoryIT` is the real-DB pattern.
+FE-only and DB-seed features have no unit test — verify in the browser / via `/api/health/db`.
+
+## The database (seeded — read it, don't recreate it)
+Schema `fxdb`: `currency`, `account`, `fx_rate` (history — "latest" = max `rate_date` per pair),
+`transfer`. Data access is `JdbcTemplate` (no JPA). Don't change the schema unless a requirement
+explicitly needs it.

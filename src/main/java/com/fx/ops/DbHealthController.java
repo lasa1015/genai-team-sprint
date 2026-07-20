@@ -1,17 +1,18 @@
 package com.fx.ops;
 
-// GIVEN — do not edit. Ops plumbing so you can verify your database work from
-// the running app (curl localhost:8080/api/health/db). You will build the real
-// data API yourself in Week 2 Day 2 — this class is not the pattern for it.
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+/**
+ * DB check + a quick view of what the seed loaded.
+ * GET /api/health/db -> {"status":"UP","tables":{"currency":8,"account":20,"fx_rate":30,"transfer":200}}
+ * Handy for confirming `docker compose up` seeded fxdb before you start building features.
+ */
 @RestController
 public class DbHealthController {
 
@@ -40,7 +41,7 @@ public class DbHealthController {
             out.put("tables", counts);
         } catch (Exception e) {
             out.put("status", "DOWN");
-            out.put("hint", "Is MySQL running, and does fxdb exist with user appuser? " + e.getMessage());
+            out.put("hint", "Is MySQL up and is fxdb seeded? Try `docker compose up`. " + e.getMessage());
         }
         return out;
     }
