@@ -1,3 +1,5 @@
+# sha luo branch  111  66666
+
 # fx-w2d1-m — Friday's recap, then tests first (morning)
 
 *Decks: Collections 13 · Exceptions 15 · JUnit 5 · Mockito · Test Driven Development v2 · GenAI for tests · morning, ~3.5h hands-on*
