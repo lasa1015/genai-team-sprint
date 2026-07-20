@@ -15,10 +15,18 @@
     <artifactId>fx-app</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <name>fx-app</name>
-    <description>Currency Exchange System — your Week 1-3 capstone project</description>
+    <description>FX App skeleton — full-stack starting point for the w2d1-a GenAI sprint</description>
 
     <properties>
         <java.version>21</java.version>
+        <!--
+          Override Spring Boot 3.3.4's Testcontainers (1.19.8, from 2024). Its bundled
+          docker-java pins an old Docker API version that modern engines (Docker 28/29+,
+          min API 1.40) reject with HTTP 400 → "Could not find a valid Docker environment".
+          1.21.x ships a docker-java that negotiates the API version, so it works on every
+          up-to-date Docker Desktop and on CI.
+        -->
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
 
     <dependencies>
@@ -44,6 +52,17 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Integration tests against a REAL MySQL (Testcontainers). Version managed by Spring Boot. -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -52,18 +71,23 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- Run the *Check graders (e.g. RecapCheck) alongside the *Test suites,
-                 so one `./mvnw test` proves the whole morning green. -->
+            <!--
+              Surefire runs unit/contract tests (*Test) on `mvn test` — fast, no Docker.
+              Failsafe runs integration tests (*IT) on `mvn verify` — these need Docker
+              (Testcontainers boots MySQL). CI runs `verify`; students' plain `mvn test` stays
+              Docker-free.
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                        <include>**/*Check.java</include>
-                    </includes>
-                </configuration>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
