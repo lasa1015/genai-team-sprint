@@ -1,9 +1,13 @@
 package com.fx.web;
 
+import com.fx.rates.UnknownRatePairException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Map;
 
@@ -27,5 +31,32 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> badRequest(IllegalArgumentException ex) {
         return Map.of("error", ex.getMessage() == null ? "bad request" : ex.getMessage());
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> missingParameter(MissingServletRequestParameterException ex) {
+        return Map.of("error", ex.getParameterName() + " is required");
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> invalidParameter(MethodArgumentTypeMismatchException ex) {
+        if ("amount".equals(ex.getName())) {
+            return Map.of("error", "amount must be numeric");
+        }
+        return Map.of("error", ex.getName() + " is invalid");
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> unreadableBody(HttpMessageNotReadableException ex) {
+        return Map.of("error", "request body is invalid");
+    }
+
+    @ExceptionHandler(UnknownRatePairException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> notFound(UnknownRatePairException ex) {
+        return Map.of("error", ex.getMessage() == null ? "not found" : ex.getMessage());
     }
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FX App — About</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <span class="brand"><span class="fx">FX</span> App</span>
+    <nav class="menu">
+      <a href="/">Welcome</a>
+      <a href="/currencies.html">Currencies</a>
+      <a href="/#latest-rates">Rates</a>
+      <a href="/convert">Convert</a>
+      <a href="/history">History</a>
+      <a href="/about.html" class="active">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>About the FX App</h1>
+    <p class="lede">
+      A lightweight foreign-exchange demo app for browsing rates, quoting conversions, and
+      reviewing recorded transfers from one shared sprint build.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <h3>App name</h3>
+        <p><strong>FX App</strong> — the team's Spring Boot + MySQL + plain HTML/CSS/JS exchange app.</p>
+      </div>
+      <div class="card">
+        <h3>Built by</h3>
+        <p>Amara, Bo, Chen, and Deniz — a small sprint team shipping one feature at a time.</p>
+      </div>
+      <div class="card">
+        <h3>What it ships</h3>
+        <p>Live rates, pair lookup, conversion quotes, transfer history, API stats, and rate history.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Team members</h2>
+      <ul class="about-list">
+        <li>Amara — welcome flow and about-page sprint owner</li>
+        <li>Bo — single-pair lookup</li>
+        <li>Chen — conversion calculator</li>
+        <li>Deniz — data and market-stat work</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Features shipped</h2>
+      <ul class="about-list">
+        <li>Latest FX rates on the welcome page</li>
+        <li>Single-pair lookup for the newest quoted rate</li>
+        <li>Conversion calculator with retail fee tiers</li>
+        <li>Recorded transfer history, newest first</li>
+        <li>Clean JSON validation and not-found errors</li>
+        <li>Explicit tradeable currency pairs in the database</li>
+        <li>Market statistics for transfers and rate freshness</li>
+        <li>Historical rate lookups for each currency pair</li>
+      </ul>
+    </div>
+
+    <p class="footer-note">
+      This page is static by design: no backend calls, just shared styling and navigation with the
+      rest of the app.
+    </p>
+  </main>
+</body>
+
+</html>
