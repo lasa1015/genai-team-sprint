@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FX App — Welcome</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
+
 <body>
   <header class="topbar">
     <span class="brand"><span class="fx">FX</span> App</span>
     <nav class="menu">
       <a href="/" class="active">Welcome</a>
       <a href="/currencies.html">Currencies</a>
-      <a href="#latest-rates">Rates</a>
-      <a href="#" class="todo">Convert</a>
-      <a href="#" class="todo">History</a>
+      <a href="/#latest-rates">Rates</a>
+      <a href="/convert">Convert</a>
+      <a href="/history">History</a>
+      <a href="/about.html">About</a>
     </nav>
   </header>
 
@@ -35,24 +38,56 @@
       </div>
       <div class="card">
         <h3>🧭 Your backlog</h3>
-        <p>The greyed-out menu items — Convert and History — are features you build.
-          See <span class="mono">requirements.md</span>.</p>
+        <p>The navigation now links the shipped pages together so you can move through the app
+          feature by feature. See <span class="mono">requirements.md</span>.</p>
       </div>
       <div class="card">
         <h3>🤖 The rule</h3>
         <p>Use AI to go fast; a feature is <em>done</em> only when it <em>works</em> and is
-          <strong>merged to main</strong>.</p>
+          <strong>merged to main</strong>.
+        </p>
       </div>
     </div>
 
     <div class="panel">
       <h2 id="latest-rates">Latest FX rates</h2>
+      <div style="margin-bottom: 1rem; display: flex; gap: .75rem; align-items: end; flex-wrap: wrap;">
+        <label>
+          <span class="status" style="display:block; margin-bottom:.35rem;">Look up a pair</span>
+          <select id="pair-select">
+            <option>Loading pairs…</option>
+          </select>
+        </label>
+      </div>
+      <p id="pair-status" class="status"></p>
+      <table style="margin-bottom: 1rem;">
+        <thead>
+          <tr>
+            <th>Base</th>
+            <th>Quote</th>
+            <th>Rate</th>
+            <th>Rate date</th>
+          </tr>
+        </thead>
+        <tbody id="pair-lookup-result">
+          <tr>
+            <td colspan="4" class="status">Choose a pair to see its latest rate.</td>
+          </tr>
+        </tbody>
+      </table>
       <table>
         <thead>
-          <tr><th>Base</th><th>Quote</th><th>Rate</th><th>Rate date</th></tr>
+          <tr>
+            <th>Base</th>
+            <th>Quote</th>
+            <th>Rate</th>
+            <th>Rate date</th>
+          </tr>
         </thead>
         <tbody id="rate-rows">
-          <tr><td colspan="4" class="status">Loading…</td></tr>
+          <tr>
+            <td colspan="4" class="status">Loading…</td>
+          </tr>
         </tbody>
       </table>
       <p id="rates-status" class="status"></p>
@@ -67,7 +102,8 @@
         Database is seeded → <a class="link" href="/api/health/db" target="_blank">/api/health/db</a>
       </p>
       <p class="status">Expect <span class="mono">{"status":"UP"}</span> and table counts
-        <span class="mono">currency:8, account:20, fx_rate:30, transfer:200</span>.</p>
+        <span class="mono">currency:8, account:20, fx_rate:30, transfer:200</span>.
+      </p>
     </div>
 
     <p class="footer-note">
@@ -79,4 +115,5 @@
 
   <script src="/js/index.js"></script>
 </body>
+
 </html>

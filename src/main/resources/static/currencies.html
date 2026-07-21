@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FX App — Currencies</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
+
 <body>
   <header class="topbar">
     <span class="brand"><span class="fx">FX</span> App</span>
     <nav class="menu">
       <a href="/">Welcome</a>
       <a href="/currencies.html" class="active">Currencies</a>
-      <a href="#" class="todo">Rates</a>
-      <a href="#" class="todo">Convert</a>
-      <a href="#" class="todo">History</a>
+      <a href="/#latest-rates">Rates</a>
+      <a href="/convert">Convert</a>
+      <a href="/history">History</a>
+      <a href="/about.html">About</a>
     </nav>
   </header>
 
@@ -28,12 +31,23 @@
     </p>
 
     <div class="panel">
+      <label class="filter-control" for="currency-filter">
+        <span class="status form-label">Filter currencies</span>
+        <input id="currency-filter" type="text" placeholder="Type code, name or symbol (e.g. US or €)"
+          autocomplete="off">
+      </label>
       <table>
         <thead>
-          <tr><th>Code</th><th>Name</th><th>Symbol</th></tr>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Symbol</th>
+          </tr>
         </thead>
         <tbody id="rows">
-          <tr><td colspan="3" class="status">Loading…</td></tr>
+          <tr>
+            <td colspan="3" class="status">Loading…</td>
+          </tr>
         </tbody>
       </table>
       <p id="status" class="status"></p>
@@ -53,4 +67,5 @@
 
   <script src="/js/currencies.js"></script>
 </body>
+
 </html>
